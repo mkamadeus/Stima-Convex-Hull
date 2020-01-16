@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "point.h": "c",
+        "vector": "c",
+        "stdc++.h": "c"
+    }
+}
