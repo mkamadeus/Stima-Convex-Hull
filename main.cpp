@@ -17,21 +17,36 @@ int main()
 {
     // Initialization
     int n;
+    char modeInput;
     vector<pair<int,int>> pointList;
     vector<pair<int,int>> result;
+    srand (time(NULL));
 
-    // printf("Enter points count: ");
+    printf("Randomize input?(y/n): ");
+    scanf("%c", &modeInput);
+    bool randomize = (modeInput=='y' || modeInput == 'Y');
+    
+    printf("Enter points count: ");
     scanf("%d", &n);
 
     for(int i=1;i<=n;i++)
     {
         int x,y;
-        // printf("Enter point %d: ", i);
-        scanf("%d %d", &x, &y);
+        if(randomize)
+        {
+            x = rand() % 101 ;
+            y = rand() % 101 ;
+        }
+        else 
+        {
+
+            printf("Enter point %d: ", i);
+            scanf("%d %d", &x, &y);
+        }
         pointList.push_back({x,y});
     }
 
-    // printPointList(pointList);
+    printPointList(pointList);
 
     // Convex Hull 1: Find furthest left point
     int pivotIndex=0;
@@ -43,17 +58,16 @@ int main()
         pivot = pointList[pivotIndex];
     }
 
-    printf("Pivot Index: %d Pivot : ", pivotIndex);
-    printPoint(pivot);
-
     // Convex Hull 2 : Making the convex hull itself
 
     int startingIndex = pivotIndex;
     int lastIndex;
-
+    
     do
     {
-        for(int i=0;i<n;i++)
+        int i=0;
+        bool found=false;
+        while(!found && i<n)
         {
             if(i!=pivotIndex)
             {
@@ -81,15 +95,16 @@ int main()
                 }
                 if(lastIndex!=i && oneSided)
                 {
-                    printf("Ke sini gan:");
+                    printf("Ke sini gan: ");
                     printPoint(pointList[i]);
                     lastIndex = pivotIndex;
                     pivot = pointList[i];
                     pivotIndex = i;
-                    break;
+                    found = true;
                 }
 
             }
+            i++;
         }
         // break;
 
