@@ -21,11 +21,13 @@ void render(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
+    glEnable(GLUT_MULTISAMPLE);
 	//draw a line
 
-    glLineWidth(1.0f);
+    glLineWidth(1.2f);
     glColor3f(0.0, 1.0, 0.0);
-    glDisable(GL_LINE_SMOOTH);
+    glEnable(GL_LINE_SMOOTH);
     int prevX=result[0].first,prevY=result[0].second;
     for(int i=1;i<result.size();i++)
     {
@@ -45,7 +47,8 @@ void render(void)
 	glColor3f(1.0, 0.0, 0.0);
 
 	//draw two points
-    glPointSize(5.0f);
+    glPointSize(7.5f);
+    glEnable(GL_POINT_SMOOTH);
 	glBegin(GL_POINTS);
 	for(int i = 0; i < pointList.size(); i++)
 	{
@@ -65,7 +68,7 @@ DWORD WINAPI startLoop(LPVOID param)
     glutInitWindowSize(600,600);
     glutCreateWindow("Convex Hull");
 
-    glClearColor(0.0,0.0,0.0,1.0);
+    glClearColor(0.5,0.5,0.5,1.0);
     glutDisplayFunc(render);
 
     glutMainLoop();
@@ -108,11 +111,10 @@ int main()
     int pivotIndex=0;
     pair<int,int> pivot = pointList[pivotIndex];
     
-    for(int i=1;i<pointList.size();i++) if(pivot.first > pointList[i].first)
-    {
+    for(int i=1;i<pointList.size();i++) if(pointList[pivotIndex].first > pointList[i].first)
         pivotIndex = i;
-        pivot = pointList[pivotIndex];
-    }
+
+    pivot = pointList[pivotIndex];
 
     // Convex Hull 2 : Making the convex hull itself
 
@@ -159,11 +161,9 @@ int main()
                     pivotIndex = i;
                     found = true;
                 }
-
             }
             i++;
         }
-        // break;
 
     } while(pivotIndex!=startingIndex);
 
@@ -179,7 +179,7 @@ int main()
     glutInitWindowSize(600,600);
     glutCreateWindow("Convex Hull");
     gluOrtho2D (0.0, 200.0, 0.0, 150.0);
-    glClearColor(0.0,0.0,0.0,1.0);
+    glClearColor(0.1,0.1,0.1,1.0);
     glutDisplayFunc(render);
 
     glutMainLoop();
