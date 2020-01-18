@@ -6,10 +6,9 @@ void printPoint(pair<int,int> p)
 {
     printf("<%d,%d>\n", p.first, p.second);
 }
-
+    
 void printPointList(vector<pair<int,int>> v)
 {
-    printf("Points in list:\n");
     for(vector<pair<int,int>>::iterator ii=v.begin(); ii!=v.end(); ii++) printPoint((*ii));
 }
 
@@ -20,6 +19,7 @@ int main()
     char modeInput;
     vector<pair<int,int>> pointList;
     vector<pair<int,int>> result;
+
     srand (time(NULL));
 
     printf("Randomize input?(y/n): ");
@@ -39,7 +39,6 @@ int main()
         }
         else 
         {
-
             printf("Enter point %d: ", i);
             scanf("%d %d", &x, &y);
         }
@@ -97,6 +96,7 @@ int main()
                 {
                     printf("Ke sini gan: ");
                     printPoint(pointList[i]);
+                    result.push_back(pointList[i]);
                     lastIndex = pivotIndex;
                     pivot = pointList[i];
                     pivotIndex = i;
@@ -109,6 +109,8 @@ int main()
         // break;
 
     } while(pivotIndex!=startingIndex);
+
+    printf("Convex Hull:\n");
 
 
 }
