@@ -1,10 +1,6 @@
 #include <GL/glut.h>
-#include <windows.h>
 #include <bits/stdc++.h>
-#include <chrono>
-
-#define OFFSET_X 40
-#define OFFSET_Y 0
+#include <windows.h>
 
 using namespace std;
 
@@ -29,30 +25,32 @@ void printPointList(vector<pair<int,int>> v)
 void render(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
 
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
     glEnable(GLUT_MULTISAMPLE);
 
 	//draw a line
     glLineWidth(1.2f);
-    glColor3f(1.0, 0.941, 0.0);
+    glColor3f(0.0, 1.0, 0.0);
     glEnable(GL_LINE_SMOOTH);
     int prevX=result[0].first,prevY=result[0].second;
     for(int i=1;i<result.size();i++)
     {
+        
         glBegin(GL_LINES);
-            glVertex2i(prevX + OFFSET_X,prevY + OFFSET_Y);
-            glVertex2i(result[i].first + OFFSET_X,result[i].second + OFFSET_Y);
+            glVertex2i(prevX,prevY);
+            glVertex2i(result[i].first,result[i].second);
         glEnd();
         prevX=result[i].first;
         prevY=result[i].second;
     }
     glBegin(GL_LINES);
-        glVertex2i(prevX + OFFSET_X,prevY + OFFSET_Y);
-        glVertex2i(result[0].first + OFFSET_X,result[0].second + OFFSET_Y);
+        glVertex2i(prevX,prevY);
+        glVertex2i(result[0].first,result[0].second);
     glEnd();
 
-	glColor3f(0.2111, 0.5025, 0.2864);
+	glColor3f(1.0, 0.0, 0.0);
 
 	//draw two points
     glPointSize(7.5f);
@@ -60,24 +58,24 @@ void render(void)
 	glBegin(GL_POINTS);
 	for(int i = 0; i < pointList.size(); i++)
 	{
-		glVertex2i(pointList[i].first + OFFSET_X,pointList[i].second + OFFSET_Y);
+		glVertex2i(pointList[i].first,pointList[i].second);
 	}
 	glEnd();
 
 	glFlush();		/* Complete any pending operations */
 }
 
-int main()
+DWORD WINAPI console(LPVOID param)
 {
     // Initialization
     int n;
     char modeInput;
 
-    // Initialize seed for pseudo-random number generator
     srand (time(NULL));
 
     std::printf("Randomize input?(y/n): ");
-    scanf("%c", &modeInput);
+    // scanf("%c", &modeInput);
+    cin >> c
     bool randomize = (modeInput=='y' || modeInput == 'Y');
     
     std::printf("Enter points count: ");
@@ -88,8 +86,8 @@ int main()
         int x,y;
         if(randomize)
         {
-            x = rand() % 151;
-            y = rand() % 151;
+            x = rand() % 101 + 50 ;
+            y = rand() % 101 + 20;
         }
         else 
         {
@@ -100,9 +98,6 @@ int main()
     }
 
     printPointList(pointList);
-
-    // Start Timer
-    auto start = std::chrono::steady_clock::now();
 
     // Convex Hull 1: Find furthest left point
     int pivotIndex=0;
@@ -155,10 +150,8 @@ int main()
                 
                 if(lastIndex!=i && oneSided)
                 {
-                    // std::printf("Convex Hull Point-%d: ", ++count);
-                    // printPoint(pointList[i]);
-                    // std::printf("\n");
-
+                    std::printf("Convex Hull Point-%d: ", ++count);
+                    printPoint(pointList[i]);
                     result.push_back(pointList[i]);
                     lastIndex = pivotIndex;
                     pivot = pointList[i];
@@ -170,14 +163,12 @@ int main()
         }
     } while(pivotIndex!=startingIndex);
 
-    auto stop = std::chrono::steady_clock::now();
-    auto duration  = std::chrono::duration_cast<std::chrono::nanoseconds>(stop-start);
-
-    std::cout << '\n' << "Time taken: " << duration.count() << " ns\n";
-
     std::printf("Convex Hull:\n");
     printPointList(result);
-    
+}
+
+DWORD WINAPI display(LPVOID param)
+{
     int argc = 1;
     glutInit(&argc, NULL);
 
@@ -185,9 +176,31 @@ int main()
     glutInitWindowSize(600,600);
     glutCreateWindow("Convex Hull");
     gluOrtho2D (0.0, 200.0, 0.0, 150.0);
-    glClearColor(0.0,0.0,0.0,1.0);
+    glClearColor(0.1,0.1,0.1,1.0);
     glutDisplayFunc(render);
 
     glutMainLoop();
+ 
+}
 
+int main()
+{
+    int data1 = 1;
+    int data2 = 2;
+
+    HANDLE handle1 = 0;
+    HANDLE handle2 = 0;
+    HANDLE handleArray[3];
+
+    handle1 = CreateThread(NULL, 0 , console, NULL , 0, NULL);
+    if(handle1 == NULL) ExitProcess(0);
+    handle2 = CreateThread(NULL, 0 , display, &data2 , 0, NULL);
+    if(handle2 == NULL) ExitProcess(0);
+
+    handleArray[0] = handle1;
+    handleArray[1] = handle2;
+
+    WaitForMultipleObjects(2,handleArray, TRUE, INFINITE);
+    CloseHandle(handle1);
+    CloseHandle(handle2);
 }
