@@ -1,6 +1,11 @@
-#include<bits/stdc++.h>
+#include <GL/glut.h>
+#include <windows.h>
+#include <bits/stdc++.h>
 
 using namespace std;
+
+vector<pair<int,int>> pointList;
+vector<pair<int,int>> result;
 
 void printPoint(pair<int,int> p)
 {
@@ -12,13 +17,65 @@ void printPointList(vector<pair<int,int>> v)
     for(vector<pair<int,int>>::iterator ii=v.begin(); ii!=v.end(); ii++) printPoint((*ii));
 }
 
+void render(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//draw a line
+
+    glLineWidth(1.0f);
+    glColor3f(0.0, 1.0, 0.0);
+    glDisable(GL_LINE_SMOOTH);
+    int prevX=result[0].first,prevY=result[0].second;
+    for(int i=1;i<result.size();i++)
+    {
+        
+        glBegin(GL_LINES);
+            glVertex2i(prevX,prevY);
+            glVertex2i(result[i].first,result[i].second);
+        glEnd();
+        prevX=result[i].first;
+        prevY=result[i].second;
+    }
+    glBegin(GL_LINES);
+        glVertex2i(prevX,prevY);
+        glVertex2i(result[0].first,result[0].second);
+    glEnd();
+
+	glColor3f(1.0, 0.0, 0.0);
+
+	//draw two points
+    glPointSize(5.0f);
+	glBegin(GL_POINTS);
+	for(int i = 0; i < pointList.size(); i++)
+	{
+		glVertex2i(pointList[i].first,pointList[i].second);
+	}
+	glEnd();
+
+	glFlush();		/* Complete any pending operations */
+}
+
+DWORD WINAPI startLoop(LPVOID param)
+{
+    int argc = 1;
+    glutInit(&argc, NULL);
+
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(600,600);
+    glutCreateWindow("Convex Hull");
+
+    glClearColor(0.0,0.0,0.0,1.0);
+    glutDisplayFunc(render);
+
+    glutMainLoop();
+}
+
 int main()
 {
     // Initialization
     int n;
     char modeInput;
-    vector<pair<int,int>> pointList;
-    vector<pair<int,int>> result;
 
     srand (time(NULL));
 
@@ -34,8 +91,8 @@ int main()
         int x,y;
         if(randomize)
         {
-            x = rand() % 101 ;
-            y = rand() % 101 ;
+            x = rand() % 101 + 50 ;
+            y = rand() % 101 + 20;
         }
         else 
         {
@@ -110,7 +167,21 @@ int main()
 
     } while(pivotIndex!=startingIndex);
 
-    printf("Convex Hull:\n");
+    
 
+    printf("Convex Hull:\n");
+    printPointList(result);
+    
+    int argc = 1;
+    glutInit(&argc, NULL);
+
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(600,600);
+    glutCreateWindow("Convex Hull");
+    gluOrtho2D (0.0, 200.0, 0.0, 150.0);
+    glClearColor(0.0,0.0,0.0,1.0);
+    glutDisplayFunc(render);
+
+    glutMainLoop();
 
 }

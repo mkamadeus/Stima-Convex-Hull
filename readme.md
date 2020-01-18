@@ -2,4 +2,4 @@
 
 Tugas kecil Stima IF2211 : Convex Hull, brute-force approach.
 
-Semoga ada visualisasinya.
+Visualisasinya ada uyey!
