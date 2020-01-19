@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 #include <chrono>
 
-#define OFFSET_X 40
+#define OFFSET_X 0
 #define OFFSET_Y 0
 
 using namespace std;
@@ -32,50 +32,56 @@ void resize(int width, int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    if (width >= height) {
-        // aspect >= 1, set the height from -1 to 1, with larger width
-        gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
-    } else {
-        // aspect < 1, set the width to -1 to 1, with larger height
-        gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
-    }
+    if (width >= height) gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
+    else gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
 }
 
 void render(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT); // clear the drawing buffer.
 
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
     glEnable(GLUT_MULTISAMPLE);
 
 	// Make Convex Hull Lines
-    glLineWidth(1.2f);
+    glLineWidth(0.5f);
     glColor3f(1.0, 0.941, 0.0);
     glEnable(GL_LINE_SMOOTH);
     int prevX=result[0].first,prevY=result[0].second;
-    for(int i=1;i<result.size();i++)
+    for(int i=0;i<result.size();i++)
     {
+        // Draw line for the convex hull result
         glBegin(GL_LINES);
-            glVertex2i(prevX + OFFSET_X,prevY + OFFSET_Y);
-            glVertex2i(result[i].first + OFFSET_X,result[i].second + OFFSET_Y);
-        glEnd();
-        prevX=result[i].first;
-        prevY=result[i].second;
-    }
-    glBegin(GL_LINES);
         glVertex2i(prevX + OFFSET_X,prevY + OFFSET_Y);
-        glVertex2i(result[0].first + OFFSET_X,result[0].second + OFFSET_Y);
-    glEnd();
+        glVertex2i(result[(i+1)%result.size()].first + OFFSET_X,result[(i+1)%result.size()].second + OFFSET_Y);
+        glEnd();
 
-	// Make the points
+        // Change previous point to the next pivot
+        prevX=result[i+1].first;
+        prevY=result[i+1].second;
+    }
+
+	// Make the set of points
+    glEnable(GL_POINT_SMOOTH);
     glPointSize(5.0f);
 	glColor3f(0.2111, 0.5025, 0.2864);
-    glEnable(GL_POINT_SMOOTH);
-	glBegin(GL_POINTS);
 	for(int i = 0; i < pointList.size(); i++)
-		glVertex2i(pointList[i].first + OFFSET_X,pointList[i].second + OFFSET_Y);
+    {
+        // Draw point
+    	glBegin(GL_POINTS);
+        glVertex2i(pointList[i].first + OFFSET_X,pointList[i].second + OFFSET_Y);
+        glEnd();
+    }
 
-	glEnd();
+    glPointSize(7.0f);
+	glColor3f(0.6676, 0.1769, 0.1555);
+	for(int i = 0; i < result.size(); i++)
+    {
+        // Draw point
+    	glBegin(GL_POINTS);
+        glVertex2i(result[i].first + OFFSET_X,result[i].second + OFFSET_Y);
+        glEnd();
+    }
 
 	glFlush();
 }
@@ -191,9 +197,14 @@ int main()
 
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(800,800);
+    glutInitWindowPosition (100, 100);
+
     glutCreateWindow("Convex Hull");
-    gluOrtho2D (0.0, 200.0, 0.0, 150.0);
-    glClearColor(0.0,0.0,0.0,1.0);
+    glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluOrtho2D(-20.0, 170.0, -20.0, 170.0);
+
+
     glutDisplayFunc(render);
     glutReshapeFunc(resize);
 
