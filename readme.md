@@ -1,7 +1,7 @@
 # Convex Hull with Brute Force O(n^3)
 > Tugas kecil Stima IF2211 : Convex Hull, brute-force approach.
 
-Thanks to @yonasadiel for giving me the information about how to use OpenGL in conjuction with MinGW. Without his help, the visualization couldn't be created as it is right now.
+Thanks to [@yonasadiel](https://github.com/yonasadiel) for giving me the information about how to use OpenGL in conjuction with MinGW. Without his help, the visualization couldn't be created as it is right now.
 
 ## Prerequisites
 There are several requirements to be fulfilled in order to compile and run this program.
