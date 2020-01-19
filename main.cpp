@@ -11,6 +11,7 @@ using namespace std;
 vector<pair<int,int>> pointList;
 vector<pair<int,int>> result;
 
+// Debugging functions
 void printPoint(pair<int,int> p)
 {
     std::printf("<%d,%d>", p.first, p.second);
@@ -25,6 +26,7 @@ void printPointList(vector<pair<int,int>> v)
     }
     printf("\n");
 }   
+
 
 void resize(int width, int height)
 {
@@ -203,7 +205,6 @@ int main()
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluOrtho2D(-20.0, 170.0, -20.0, 170.0);
-
 
     glutDisplayFunc(render);
     glutReshapeFunc(resize);
