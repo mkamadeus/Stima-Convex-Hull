@@ -24,6 +24,21 @@ void printPointList(vector<pair<int,int>> v)
         std::printf(" ");
     }
     printf("\n");
+}   
+
+void resize(int width, int height)
+{
+    GLfloat aspect = (GLfloat)width / (GLfloat)height;
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    if (width >= height) {
+        // aspect >= 1, set the height from -1 to 1, with larger width
+        gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
+    } else {
+        // aspect < 1, set the width to -1 to 1, with larger height
+        gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
+    }
 }
 
 void render(void)
@@ -33,7 +48,7 @@ void render(void)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
     glEnable(GLUT_MULTISAMPLE);
 
-	//draw a line
+	// Make Convex Hull Lines
     glLineWidth(1.2f);
     glColor3f(1.0, 0.941, 0.0);
     glEnable(GL_LINE_SMOOTH);
@@ -52,19 +67,17 @@ void render(void)
         glVertex2i(result[0].first + OFFSET_X,result[0].second + OFFSET_Y);
     glEnd();
 
+	// Make the points
+    glPointSize(5.0f);
 	glColor3f(0.2111, 0.5025, 0.2864);
-
-	//draw two points
-    glPointSize(7.5f);
     glEnable(GL_POINT_SMOOTH);
 	glBegin(GL_POINTS);
 	for(int i = 0; i < pointList.size(); i++)
-	{
 		glVertex2i(pointList[i].first + OFFSET_X,pointList[i].second + OFFSET_Y);
-	}
+
 	glEnd();
 
-	glFlush();		/* Complete any pending operations */
+	glFlush();
 }
 
 int main()
@@ -108,11 +121,10 @@ int main()
     int pivotIndex=0;
     
     // Find minimum index
-    for(int i=1;i<pointList.size();i++) if(pointList[pivotIndex].first > pointList[i].first)
-        pivotIndex = i;
+    for(int i=1;i<pointList.size();i++) if(pointList[pivotIndex].first > pointList[i].first) pivotIndex = i;
 
-     pair<int,int> pivot = pointList[pivotIndex];
-
+    pair<int,int> pivot = pointList[pivotIndex];
+ 
     // Convex Hull 2 : Making the convex hull itself
 
     // Store the starting index
@@ -155,10 +167,6 @@ int main()
                 
                 if(lastIndex!=i && oneSided)
                 {
-                    // std::printf("Convex Hull Point-%d: ", ++count);
-                    // printPoint(pointList[i]);
-                    // std::printf("\n");
-
                     result.push_back(pointList[i]);
                     lastIndex = pivotIndex;
                     pivot = pointList[i];
@@ -182,11 +190,12 @@ int main()
     glutInit(&argc, NULL);
 
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(600,600);
+    glutInitWindowSize(800,800);
     glutCreateWindow("Convex Hull");
     gluOrtho2D (0.0, 200.0, 0.0, 150.0);
     glClearColor(0.0,0.0,0.0,1.0);
     glutDisplayFunc(render);
+    glutReshapeFunc(resize);
 
     glutMainLoop();
 
