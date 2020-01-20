@@ -41,7 +41,6 @@ void resize(int width, int height)
 void render(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT); // clear the drawing buffer.
-
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
     glEnable(GLUT_MULTISAMPLE);
 
