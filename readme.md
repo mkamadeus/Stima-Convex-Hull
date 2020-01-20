@@ -16,3 +16,6 @@ To compile and run the program, use `run.bat`.
 ## Examples
 
 Here's some of author's experiment on using the program.
+<div>
+    <img src="./screenshots/visualization/n_100.png" width="500">
+</div>
